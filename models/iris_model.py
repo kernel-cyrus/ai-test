@@ -5,18 +5,21 @@
     pip install pandas scikit-learn
     
     2. Install Tensorflow (NV Special Release)
-    pip --proxy install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v61 tensorflow==2.16.1+nv24.8
+    pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v61 tensorflow==2.16.1+nv24.8
 
     3. Get GPU Loading
     watch -n 1 cat /sys/devices/platform/gpu.0/load
-
 '''
 
+import os
 import tensorflow as tf
 import pandas as pd
 import sklearn as sk
 
 if __name__ == '__main__':
+
+    # Disable CUDA
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
     # Show device info
     print("GPU Detect:", tf.config.list_physical_devices('GPU'))
