@@ -1,8 +1,26 @@
+'''
+    Run on Orin (Jatpack 6.1)
+    -------------------------------
+    1. Install Dependency
+    pip install pandas scikit-learn
+    
+    2. Install Tensorflow (NV Special Release)
+    pip --proxy install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v61 tensorflow==2.16.1+nv24.8
+
+    3. Get GPU Loading
+    watch -n 1 cat /sys/devices/platform/gpu.0/load
+
+'''
+
 import tensorflow as tf
 import pandas as pd
 import sklearn as sk
 
 if __name__ == '__main__':
+
+    # Show device info
+    print("GPU Detect:", tf.config.list_physical_devices('GPU'))
+    print("Using Device:", tf.test.gpu_device_name())
 
     # Read dataset
     columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
@@ -51,4 +69,4 @@ if __name__ == '__main__':
     # Test
     loss, accurate = model.evaluate(testset)
 
-    print('测试准确率: %.4f' % accurate)
+    print('Accurate: %.4f' % accurate)
