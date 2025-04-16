@@ -9,6 +9,12 @@
 
     3. Get GPU Loading
     watch -n 1 cat /sys/devices/platform/gpu.0/load
+
+    4. Convert to ONNX (.onnx)
+    python3 -m tf2onnx.convert --saved-model ./saved_model --output ./iris_model.onnx --opset 13
+
+    5. Compile to TensorRT Engine (.trt)
+    trtexec --onnx=iris_model.onnx --saveEngine=iris_model.engine
 '''
 
 import os
