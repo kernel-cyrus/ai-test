@@ -10,16 +10,13 @@ if __name__ == '__main__':
     rknn_path = './iris_model.rknn'
 
     rknn = rknn.api.RKNN()
-    #rknn.config(target_platform='rk3588')
+    rknn.config(target_platform='rk3588')
 
     if os.path.exists(rknn_path) and not build_model:
-
         ret = rknn.load_rknn(rknn_path)
         if ret:
             exit('ERROR: Load rknn failed.')
-
     else:
-
         ret = rknn.load_onnx(onnx_path)
         if ret:
             exit('ERROR: Load onnx failed.')
