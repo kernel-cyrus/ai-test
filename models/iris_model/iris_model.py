@@ -12,6 +12,7 @@
 '''
 
 import os
+import sys
 import tensorflow as tf
 import pandas as pd
 import sklearn as sk
@@ -73,6 +74,8 @@ def train_model():
 
 if __name__ == '__main__':
 
+    force_retrain = len(sys.argv) >=2 and sys.argv[1] == '1'
+
     # Disable CUDA
     # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
@@ -84,7 +87,7 @@ if __name__ == '__main__':
     keras_path = './iris_model.keras'
     onnx_path  = './iris_model.onnx'
 
-    if os.path.exists(keras_path):
+    if os.path.exists(keras_path) and not force_retrain:
 
         # Load Model
         print('Load model:', keras_path)
