@@ -15,6 +15,7 @@ import os
 import tensorflow as tf
 import pandas as pd
 import sklearn as sk
+import numpy as np
 
 if __name__ == '__main__':
 
@@ -71,5 +72,18 @@ if __name__ == '__main__':
 
     # Test
     loss, accurate = model.evaluate(testset)
-
     print('Accurate: %.4f' % accurate)
+
+    # Create a sample
+    sample = np.array([[5.1, 3.5, 1.4, 0.2]]) # Iris-setosa
+
+    # Prediction
+    pred_probs = model.predict(sample)
+
+    class_id = np.argmax(pred_probs, axis=1)
+    class_name = species_encoder.inverse_transform(class_id)[0]
+
+    # Print Result
+    print("Sample:", sample)
+    print("Prediction:", species_encoder.classes_, pred_probs)
+    print("Result:", class_name)
