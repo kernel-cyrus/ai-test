@@ -2,7 +2,7 @@
     Run on Orin (Jatpack 6.1)
     -------------------------------
     1. Install Dependency
-    pip install pandas scikit-learn
+    pip install pandas scikit-learn tf2onnx
     
     2. Install Tensorflow (NV Special Release)
     pip install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v61 tensorflow==2.16.1+nv24.8
@@ -17,18 +17,13 @@ import pandas as pd
 import sklearn as sk
 import numpy as np
 
-if __name__ == '__main__':
+def train_model():
 
-    # Disable CUDA
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
-    # Show device info
-    print("GPU Detect:", tf.config.list_physical_devices('GPU'))
-    print("Using Device:", tf.test.gpu_device_name())
+    dataset_path = './dataset/iris.data'
 
     # Read dataset
     columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-    df = pd.read_csv('../datasets/iris.data', names=columns)
+    df = pd.read_csv(dataset_path, names=columns)
     # print(df)
 
     # Encode dataset (encode species to id)
@@ -74,16 +69,54 @@ if __name__ == '__main__':
     loss, accurate = model.evaluate(testset)
     print('Accurate: %.4f' % accurate)
 
-    # Create a sample
-    sample = np.array([[5.1, 3.5, 1.4, 0.2]]) # Iris-setosa
+    return model
+
+if __name__ == '__main__':
+
+    # Disable CUDA
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+    # Show device info
+    print("GPU Detect:", tf.config.list_physical_devices('GPU'))
+    print("Using Device:", tf.test.gpu_device_name())
+
+    saved_path = './saved_model'
+    keras_path = './iris_model.keras'
+    onnx_path  = './iris_model.onnx'
+
+    if os.path.exists(keras_path):
+
+        # Load Model
+        print('Load model:', keras_path)
+        model = tf.keras.models.load_model(keras_path)
+
+    else:
+
+        # Train Model
+        print('Train model...')
+        model = train_model()
+
+        # Save Model
+        model.save(keras_path)
+        print('Model saved:', keras_path)
+        
+        # Convert to ONNX
+        print('Generating ONNX...')
+        model.export(saved_path)
+        os.system('python3 -m tf2onnx.convert --saved-model ./saved_model --output ./iris_model.onnx --opset 13')
+
+    # Print model summary
+    model.summary()
 
     # Prediction
-    pred_probs = model.predict(sample)
+    species = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']
 
-    class_id = np.argmax(pred_probs, axis=1)
-    class_name = species_encoder.inverse_transform(class_id)[0]
+    sample = np.array([[5.1, 3.5, 1.4, 0.2]]) # Iris-setosa
+
+    pred_probs = model.predict(sample)
+    class_id = np.argmax(pred_probs, axis=1)[0]
 
     # Print Result
     print("Sample:", sample)
-    print("Prediction:", species_encoder.classes_, pred_probs)
-    print("Result:", class_name)
+    print("Prediction:", species, pred_probs)
+    print("Result:", species[class_id])
