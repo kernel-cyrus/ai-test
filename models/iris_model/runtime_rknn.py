@@ -1,6 +1,6 @@
 import os
 import sys
-import rknn
+from rknn.api import RKNN
 
 if __name__ == '__main__':
 
@@ -9,15 +9,15 @@ if __name__ == '__main__':
     onnx_path = './iris_model.onnx'
     rknn_path = './iris_model.rknn'
 
-    rknn = rknn.api.RKNN()
-    rknn.config(target_platform='rk3588')
+    rknn = RKNN()
+    rknn.config(target_platform='rk3588') # Define input shape: "dynamic_input=[[[1, 4]]]"
 
     if os.path.exists(rknn_path) and not build_model:
         ret = rknn.load_rknn(rknn_path)
         if ret:
             exit('ERROR: Load rknn failed.')
     else:
-        ret = rknn.load_onnx(onnx_path)
+        ret = rknn.load_onnx(onnx_path, inputs=['keras_tensor'], input_size_list=[[1, 4]])
         if ret:
             exit('ERROR: Load onnx failed.')
 
