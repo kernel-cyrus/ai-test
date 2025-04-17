@@ -2,7 +2,6 @@ import os
 import sys
 import platform
 import numpy as np
-from rknn.api import RKNN
 
 def print_result(sample, result):
     print('Sample:', sample)
@@ -50,7 +49,7 @@ def runtime_board(rknn_path, sample):
         exit('ERROR: Load rknn failed.')
         
     print('Init rknn runtime.')
-    ret = rknn.init_runtime(target='rk3588')
+    ret = rknn.init_runtime()
     if ret:
         exit('ERROR: Runtime init failed.')
 
@@ -68,6 +67,7 @@ if __name__ == '__main__':
     sample = np.array([[5.1, 3.5, 1.4, 0.2]], dtype=np.float32)
     
     arch = platform.machine()
+    print('Platform:', arch)
 
     if arch == 'x86_64':
 
