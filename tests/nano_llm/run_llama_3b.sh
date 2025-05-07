@@ -4,8 +4,9 @@
 # 3. Create Huggingface token
 
 jetson-containers run							\
-	--env HUGGINGFACE_TOKEN=	\
+        --env HUGGINGFACE_TOKEN=hf_!FUOFgBvGMdHKyWiCa!ktKJMTitksNaMZmtV!\
+	--env HF_ENDPOINT=https://hf-mirror.com                         \
 	$(autotag nano_llm) 						\
 	python3 -m nano_llm.chat --api mlc 				\
-	--model meta-llama/Meta-Llama-3-8B-Instruct 			\
+	--model deepseek-ai/DeepSeek-R1-Distill-Llama-8B 		\
 	--prompt "Can you tell me a joke about llamas?"
